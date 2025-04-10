@@ -16,6 +16,8 @@ services:
     command: >
       sh -c "
       cd /var/www/html &&
+      rm -f config/app.php &&
+      ln -s /var/www/html/config/app.local.php /var/www/html/config/app.php &&
       composer install --no-interaction &&
       /usr/sbin/httpd -D FOREGROUND
       "

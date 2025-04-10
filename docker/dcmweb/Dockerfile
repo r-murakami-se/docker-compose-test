@@ -14,8 +14,8 @@ RUN dnf install -y php php-mbstring php-intl php-pdo php-mysqlnd php-xml php-cli
 # Apacheのインストール
 RUN dnf install -y httpd
 
-# zip, unzipのインストール
-RUN dnf install -y zip unzip
+# zip, unzip, scpのインストール
+RUN dnf install -y zip unzip openssh-clients
 
 # dnfキャッシュ削除（イメージサイズ削減）
 RUN dnf clean all
