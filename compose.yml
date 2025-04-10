@@ -26,7 +26,10 @@ services:
     image: mysql:5.5
     container_name: dcm-db
     volumes:
+      - dcmdb-data:/var/lib/mysql
       - ./docker/dcmdb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/dcmdb/sql/cakephptest.sql:/docker-entrypoint-initdb.d/01_cakephptest.sql
+      - ./docker/dcmdb/sql/masterkanri.sql:/docker-entrypoint-initdb.d/02_masterkanri.sql
     # .envで環境変数を管理
     environment:
       - MYSQL_DATABASE=${DB_NAME}
@@ -36,3 +39,8 @@ services:
     # ポートを割り当て
     ports:
       - ${DB_PORT}:3306
+    command: >
+      bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
+
+volumes:
+  dcmdb-data:

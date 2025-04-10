@@ -24,9 +24,9 @@
 
 ## コンテナ削除
 
-`docker compose down --volumes`
+`docker compose down -v`
 
-※ `--volumes` DBなどの永続データも含めて削除
+※ `-v` DBなどの永続データも含めて削除
 ※ Docker構成など修正する際に使用
 
 ## コンテナ再構築して起動
