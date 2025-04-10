@@ -48,10 +48,11 @@ class PagesController extends AppController
         // echo $output;
         // exit;
 
-        ob_start();
-        system('scp -i /root/.ssh/id_rsa /var/www/html/config/app.local.php shadmin@dcmfile:/home/shadmin/ 2>&1', $status);
-        $output = ob_get_clean();
-        dd($output, $status);
+        // ob_start();
+        // system('scp -i /usr/share/httpd/.ssh/id_rsa /var/www/html/config/app.local.php shadmin@dcmfile:/home/shadmin/ 2>&1', $status);
+        // $output = ob_get_clean();
+        // dd($output, $status);
+        // exit;
 
         $count = count($path);
         if (!$count) {

@@ -42,11 +42,10 @@ ENV COMPOSER_CACHE_DIR=/tmp/composer
 RUN ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
 
 # Apachからも鍵ファイルを使用できるようにコピー
-RUN mkdir -p /var/www/.ssh && \
-    cp /root/.ssh/id_rsa /var/www/.ssh/id_rsa && \
-    chown -R apache:apache /var/www/.ssh && \
-    chmod 700 /var/www/.ssh && \
-    chmod 600 /var/www/.ssh/id_rsa
+RUN mkdir -p /usr/share/httpd/.ssh && \
+    cp /root/.ssh/id_rsa /usr/share/httpd/.ssh/id_rsa && \
+    chmod 700 /usr/share/httpd/.ssh && \
+    chmod 600 /usr/share/httpd/.ssh/id_rsa
 
 # Apache 起動用コマンド（フォアグラウンドで起動）
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]

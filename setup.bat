@@ -6,5 +6,6 @@ docker compose build dcmfile
 docker compose up -d dcmfile
 
 docker compose exec dcmweb bash -c "ssh-keyscan -H dcmfile >> /root/.ssh/known_hosts"
-docker compose exec dcmweb bash -c "cp /root/.ssh/known_hosts /var/www/.ssh/known_hosts"
-docker compose exec dcmweb bash -c "chmod 600 /var/www/.ssh/known_hosts"
+docker compose exec dcmweb bash -c "cp /root/.ssh/known_hosts /usr/share/httpd/.ssh/known_hosts"
+docker compose exec dcmweb bash -c "chmod 600 /usr/share/httpd/.ssh/known_hosts"
+docker compose exec dcmweb bash -c "chown -R apache:apache /usr/share/httpd/.ssh"
