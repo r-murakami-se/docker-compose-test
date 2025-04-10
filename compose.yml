@@ -44,5 +44,13 @@ services:
     command: >
       bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
 
+  dcmfile:
+    build:
+      context: ./docker/dcmfile
+      dockerfile: Dockerfile
+    container_name: dcm-file
+    ports:
+      - "${FILE_PORT}:22"
+
 volumes:
   dcmdb-data:

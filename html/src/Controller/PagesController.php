@@ -40,6 +40,17 @@ class PagesController extends AppController
      */
     public function display(...$path)
     {
+        // $con = ssh2_connect('dcmfile', 22);
+        // ssh2_auth_password($con, 'shadmin', 'password');
+        // $stream = ssh2_exec($con, 'ls /home/shadmin/');
+        // stream_set_blocking($stream, true);
+        // $output = stream_get_contents($stream);
+        // echo $output;
+        // exit;
+
+        // system('scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /var/www/html/config/app.local.php shadmin@dcmfile:/home/shadmin/', $result);
+        // dd($result);
+
         $count = count($path);
         if (!$count) {
             return $this->redirect('/');

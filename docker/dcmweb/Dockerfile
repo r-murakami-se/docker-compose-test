@@ -11,6 +11,13 @@ RUN dnf install -y dnf-plugins-core
 # PHP と必要な拡張モジュールのインストール
 RUN dnf install -y php php-mbstring php-intl php-pdo php-mysqlnd php-xml php-cli
 
+# ビルドに必要な開発ツールを入れる
+RUN dnf install -y findutils gcc make autoconf php-devel libssh2 libssh2-devel php-pear
+
+# ssh2 拡張を PECL からインストール
+RUN pecl install ssh2-1.1.2 && \
+    echo "extension=ssh2.so" > /etc/php.d/30-ssh2.ini
+
 # Apacheのインストール
 RUN dnf install -y httpd
 
