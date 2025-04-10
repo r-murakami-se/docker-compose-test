@@ -48,8 +48,10 @@ class PagesController extends AppController
         // echo $output;
         // exit;
 
-        // system('scp -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa /var/www/html/config/app.local.php shadmin@dcmfile:/home/shadmin/', $result);
-        // dd($result);
+        ob_start();
+        system('scp -i /root/.ssh/id_rsa /var/www/html/config/app.local.php shadmin@dcmfile:/home/shadmin/ 2>&1', $status);
+        $output = ob_get_clean();
+        dd($output, $status);
 
         $count = count($path);
         if (!$count) {

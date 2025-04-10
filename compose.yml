@@ -51,6 +51,8 @@ services:
     container_name: dcm-file
     ports:
       - "${FILE_PORT}:22"
+    depends_on:
+      - dcmweb
 
 volumes:
   dcmdb-data:

@@ -38,5 +38,15 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 
 ENV COMPOSER_CACHE_DIR=/tmp/composer
 
+# SSH 鍵を生成（パスフレーズなし）
+RUN ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa
+
+# Apachからも鍵ファイルを使用できるようにコピー
+RUN mkdir -p /var/www/.ssh && \
+    cp /root/.ssh/id_rsa /var/www/.ssh/id_rsa && \
+    chown -R apache:apache /var/www/.ssh && \
+    chmod 700 /var/www/.ssh && \
+    chmod 600 /var/www/.ssh/id_rsa
+
 # Apache 起動用コマンド（フォアグラウンドで起動）
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
