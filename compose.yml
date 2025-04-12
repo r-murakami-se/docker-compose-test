@@ -65,7 +65,7 @@ services:
       - dcmweb
 
   dcmdbpma:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:5.2.2
     container_name: dcm-db-pma
     depends_on:
       - dcmdb
@@ -80,7 +80,7 @@ services:
     restart: always
 
   mailhog:
-    image: mailhog/mailhog
+    image: mailhog/mailhog:v1.0.1
     container_name: mailhog
     ports:
       - "${MAIL_WEB_PORT}:8025"
