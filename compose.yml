@@ -10,7 +10,6 @@ services:
     # ローカルのhtmlをコンテナの/var/www/htmlにマウント
     volumes:
       - ./html:/var/www/html
-    # ポートを割り当て
     ports:
       - ${WEB_PORT}:80
     command: >
@@ -24,7 +23,6 @@ services:
     tty: true
 
   dcmdb:
-    # mysql:5.5イメージから構築
     image: mysql:5.5
     container_name: dcm-db
     volumes:
@@ -32,17 +30,29 @@ services:
       - ./docker/dcmdb/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/dcmdb/sql/cakephptest.sql:/docker-entrypoint-initdb.d/01_cakephptest.sql
       - ./docker/dcmdb/sql/masterkanri.sql:/docker-entrypoint-initdb.d/02_masterkanri.sql
-    # .envで環境変数を管理
     environment:
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASS}
       - MYSQL_ROOT_PASSWORD=${DB_PASS}
-    # ポートを割り当て
     ports:
       - ${DB_PORT}:3306
     command: >
       bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
+
+  spwebdb:
+    image: mysql:5.5
+    container_name: spweb-db
+    environment:
+      MYSQL_DATABASE: ${SPWEB_DB_NAME}
+      MYSQL_USER: ${SPWEB_DB_USER}
+      MYSQL_PASSWORD: ${SPWEB_DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${SPWEB_DB_PASS}
+    volumes:
+      - spwebdb-data:/var/lib/mysql
+      - ./docker/spwebdb/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "${SPWEB_DB_PORT}:3306"
 
   dcmfile:
     build:
@@ -59,12 +69,14 @@ services:
     container_name: dcm-db-pma
     depends_on:
       - dcmdb
+      - spwebdb
     ports:
       - "${DCMDB_PMA_PORT}:80"
     environment:
-      PMA_HOST: dcmdb
-      PMA_USER: ${DB_USER}
-      PMA_PASSWORD: ${DB_PASS}
+      PMA_ARBITRARY: 1          # ローカル以外にも指定できるようになる
+      PMA_HOSTS: dcmdb,spwebdb
+      # PMA_USER: ${DB_USER}
+      # PMA_PASSWORD: ${DB_PASS}
     restart: always
 
   mailhog:
@@ -76,3 +88,4 @@ services:
 
 volumes:
   dcmdb-data:
+  spwebdb-data:
