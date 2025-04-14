@@ -1,9 +1,3 @@
-CREATE DATABASE IF NOT EXISTS masterkanri CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-GRANT ALL PRIVILEGES ON masterkanri.* TO 'cake'@'%';
-
-USE masterkanri;
-
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

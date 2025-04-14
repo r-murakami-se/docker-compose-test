@@ -34,22 +34,19 @@ services:
       - dcmweb
 
   dcmdb:
-    image: mysql:5.5
+    build:
+      context: ./docker/dcmdb
+      dockerfile: Dockerfile
     container_name: dcm-db
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
     volumes:
-      - dcmdb-data:/var/lib/mysql
-      - ./docker/dcmdb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - dcmdb-data:/usr/local/mysql/data
+      - ./docker/dcmdb/my.cnf:/etc/my.cnf
       - ./docker/dcmdb/sql/cakephptest.sql:/docker-entrypoint-initdb.d/01_cakephptest.sql
       - ./docker/dcmdb/sql/masterkanri.sql:/docker-entrypoint-initdb.d/02_masterkanri.sql
-    environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASS}
-      - MYSQL_ROOT_PASSWORD=${DB_PASS}
-    ports:
-      - ${DB_PORT}:3306
-    # command: >
-      # bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
 
   spwebdb:
     image: mysql:5.5

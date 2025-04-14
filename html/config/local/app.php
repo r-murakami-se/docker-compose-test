@@ -229,10 +229,10 @@ return [
              * the following line and set the port accordingly
              */
             //'port' => 'non_standard_port_number',
-            'username' => 'cake',
-            'password' => 'cakepassword',
+            'username' => 'root',
+            'password' => 'password',
             'database' => 'cakephptest',
-            'encoding' => 'utf8',
+            'encoding' => 'utf8mb4',
             'timezone' => 'UTC',
             'flags' => [],
             'cacheMetadata' => true,
