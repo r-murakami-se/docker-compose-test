@@ -7,6 +7,7 @@ services:
     # db起動後にwebを起動
     depends_on:
       - dcmdb
+      - spwebdb
     # ローカルのhtmlをコンテナの/var/www/htmlにマウント
     volumes:
       - ./html:/var/www/html
@@ -16,11 +17,21 @@ services:
       sh -c "
       cd /var/www/html &&
       rm -f config/app.php &&
-      ln -s /var/www/html/config/app.local.php /var/www/html/config/app.php &&
+      ln -s /var/www/html/config/local/app.php /var/www/html/config/app.php &&
       composer install --no-interaction &&
       /usr/sbin/httpd -D FOREGROUND
       "
     tty: true
+
+  dcmfile:
+    build:
+      context: ./docker/dcmfile
+      dockerfile: Dockerfile
+    container_name: dcm-file
+    ports:
+      - "${FILE_PORT}:22"
+    depends_on:
+      - dcmweb
 
   dcmdb:
     image: mysql:5.5
@@ -37,8 +48,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASS}
     ports:
       - ${DB_PORT}:3306
-    command: >
-      bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
+    # command: >
+      # bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
 
   spwebdb:
     image: mysql:5.5
@@ -54,24 +65,14 @@ services:
     ports:
       - "${SPWEB_DB_PORT}:3306"
 
-  dcmfile:
-    build:
-      context: ./docker/dcmfile
-      dockerfile: Dockerfile
-    container_name: dcm-file
-    ports:
-      - "${FILE_PORT}:22"
-    depends_on:
-      - dcmweb
-
-  dcmdbpma:
+  phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.2.2
-    container_name: dcm-db-pma
+    container_name: phpmyadmin
     depends_on:
       - dcmdb
       - spwebdb
     ports:
-      - "${DCMDB_PMA_PORT}:80"
+      - "${PMA_PORT}:80"
     environment:
       PMA_ARBITRARY: 1          # ローカル以外にも指定できるようになる
       PMA_HOSTS: dcmdb,spwebdb
@@ -85,7 +86,13 @@ services:
     ports:
       - "${MAIL_WEB_PORT}:8025"
       - "${MAIL_PORT}:1025"
+    volumes:
+      - mailhog-data:/tmp
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /tmp
 
 volumes:
   dcmdb-data:
   spwebdb-data:
+  mailhog-data:
