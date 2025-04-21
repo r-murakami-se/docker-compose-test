@@ -1,13 +1,13 @@
 services:
-  dcmweb:
+  web:
     build:
       context: ./docker/dcmweb
       dockerfile: Dockerfile
-    container_name: dcm-web
+    container_name: web
     # db起動後にwebを起動
     depends_on:
-      - dcmdb
-      - spwebdb
+      - db1
+      - db2
     # ローカルのhtmlをコンテナの/var/www/htmlにマウント
     volumes:
       - ./html:/var/www/html
@@ -23,21 +23,21 @@ services:
       "
     tty: true
 
-  dcmfile:
+  file:
     build:
       context: ./docker/dcmfile
       dockerfile: Dockerfile
-    container_name: dcm-file
+    container_name: file
     ports:
       - "${FILE_PORT}:22"
     depends_on:
-      - dcmweb
+      - web
 
-  dcmdb:
+  db1:
     image: mysql:5.5
-    container_name: dcm-db
+    container_name: db1
     volumes:
-      - dcmdb-data:/var/lib/mysql
+      - db1-data:/var/lib/mysql
       - ./docker/dcmdb/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/dcmdb/sql/cakephptest.sql:/docker-entrypoint-initdb.d/01_cakephptest.sql
       - ./docker/dcmdb/sql/masterkanri.sql:/docker-entrypoint-initdb.d/02_masterkanri.sql
@@ -51,16 +51,16 @@ services:
     # command: >
       # bash -c "chmod 644 /etc/mysql/conf.d/my.cnf && docker-entrypoint.sh mysqld"
 
-  spwebdb:
+  db2:
     image: mysql:5.5
-    container_name: spweb-db
+    container_name: db2
     environment:
       MYSQL_DATABASE: ${SPWEB_DB_NAME}
       MYSQL_USER: ${SPWEB_DB_USER}
       MYSQL_PASSWORD: ${SPWEB_DB_PASS}
       MYSQL_ROOT_PASSWORD: ${SPWEB_DB_PASS}
     volumes:
-      - spwebdb-data:/var/lib/mysql
+      - db2-data:/var/lib/mysql
       - ./docker/spwebdb/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - "${SPWEB_DB_PORT}:3306"
@@ -69,13 +69,13 @@ services:
     image: phpmyadmin/phpmyadmin:5.2.2
     container_name: phpmyadmin
     depends_on:
-      - dcmdb
-      - spwebdb
+      - db1
+      - db2
     ports:
       - "${PMA_PORT}:80"
     environment:
       PMA_ARBITRARY: 1          # ローカル以外にも指定できるようになる
-      PMA_HOSTS: dcmdb,spwebdb
+      PMA_HOSTS: db1,db2
       # PMA_USER: ${DB_USER}
       # PMA_PASSWORD: ${DB_PASS}
     restart: always
@@ -93,6 +93,6 @@ services:
       MH_MAILDIR_PATH: /tmp
 
 volumes:
-  dcmdb-data:
-  spwebdb-data:
+  db1-data:
+  db2-data:
   mailhog-data:
